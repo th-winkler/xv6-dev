@@ -532,3 +532,20 @@ procdump(void)
     cprintf("\n");
   }
 }
+
+// List the number of processes running in the background
+int
+getprocs(void)
+{	
+    struct proc *p;
+    int count = 0;
+
+  acquire(&ptable.lock);
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->pid != UNUSED){
+	    count++;
+    }
+    release(&ptable.lock);
+  } 
+ return count; 
+}

@@ -6,6 +6,7 @@
 #include "memlayout.h"
 #include "mmu.h"
 #include "proc.h"
+#include "spinlock.h"
 
 int
 sys_fork(void)
@@ -90,8 +91,21 @@ sys_uptime(void)
   return xticks;
 }
 
-int
+struct {
+  struct spinlock lock;
+  struct proc proc[NPROC];
+} ptable;
+
+
+int 
 sys_getprocs(void)
 {
-	return getprocs();
+  int n = 0;
+  struct proc *p;
+
+  for(p= ptable.proc; p < &ptable.proc[NPROC];p++)
+    if(p->state != UNUSED)
+      n++;
+      
+  return n;
 }
